@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Flask Quiz</title>
+{% endblock %}
+{% block body %}
+    <h1>playlists</h1>
+    <ul>
+        {% for playlist in playlist_previews %}
+            <li><a href="{{ url_for('play', playlist_id=playlist.get('id')) }}">{{ playlist.get("name") }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+    

@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: rgb(209, 207, 207);
+    border-radius: 10px;
+    z-index: 1000;
+    display: none;
+}
+
+.overlay-content {
+    padding: 5%;
+    text-align: center;
+}
+
+.overlay-content img {
+    width: 80%;
+    height: auto;
+}
+
+
+#final-results-overlay {
+    width: 30vw;
+    height: 20vh;
+}
+
+#timer {
+    font-size: 24px;
+    font-weight: bold;
+    color: #73ee00;
+    margin-bottom: 20px;
+}
+
+#answer-helper {
+    width: 300px;
+    height: 50vh;
+    overflow-y: auto;
+}
+
+#answer-helper div {
+    padding: 8px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    overflow-wrap: anywhere;
+}
+
+#answer-helper div:hover {
+    background: #9e9d9d;
+}
+
