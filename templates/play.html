@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Local Spotify Quiz</title>
+{% endblock %}
+{% block body %}
+    <h1>Local Spotify Quiz</h1>
+    <p id="timer">20</p>
+    <button id="play-button">Play Song</button><br>
+    <div class="user-input">
+        <input type="text" id="user-answer" placeholder="Enter your answer">
+        <button id="submit-answer">Submit</button>
+    </div>
+
+    <p id="answer-helper"></p>
+
+    <div class="overlay" id="results-overlay">
+        <div class="overlay-content">
+            <div id="round-results"></div>
+            <button id="next-round">Next Round</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="final-results-overlay">
+        <div class="overlay-content">
+            <div id="final-results-message"></div>
+            <button id="back-home" onclick="window.location.href=`{{ url_for('quiz') }}`">
+                Back to playlists
+            </button>
+        </div>
+    </div>
+
+    <script>
+        window.token = "{{ session.get('access_token') }}";
+        window.songs = {{ songs | tojson }}; 
+    </script>
+    <script type="module" src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+{% endblock %}
