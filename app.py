@@ -105,14 +105,15 @@ def quiz():
         ]
         
         user_playlists[session["user_id"]] = {"all_playlists": availible_playlists.copy()}
-        user_playlists[session["user_id"]]["playlist_previews"] = [
+        user_playlists[session["user_id"]]["playlist_previews"] = sorted([
             {
                 "id": playlist["id"],
                 "name": playlist["name"],
-                "images": playlist["images"]
+                "images": playlist.get("images", []),
+                "songs": playlist.get("items", {}).get("total", 0)
             }
             for playlist in user_playlists[session["user_id"]]["all_playlists"]["items"]
-        ]
+        ], key=lambda x: x.get("songs", 0), reverse=True)
 
     return render_template(
         "quiz.html", 
@@ -153,4 +154,4 @@ def index():
     return redirect(url_for("login"))
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)

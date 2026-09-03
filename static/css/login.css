@@ -1,0 +1,20 @@
+.login-content {
+    transform: translateY(-60px);
+}
+
+.title {
+    font-family: "Slabo 13px", serif;
+    font-size: 72px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.2;
+    text-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    margin: 40px 20px;
+    padding-bottom: 20px;
+}
+
+@media (max-width: 576px) {
+    .title {
+        font-size: 32px;
+    }
+}

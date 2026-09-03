@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 {% block head %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/login.css")}}">
     <title>Flask Quiz</title>
 {% endblock %}
 {% block body %}
-    {% if error %}
-        <p>{{ error }}</p>
-    {% endif %}
-    <button onclick="window.location.href='{{ spotifyLoginUrl }}'">Login with Spotify</button>
+    
+    <div class="login-content">
+        <div class="container min-vh-100 d-flex flex-column justify-content-center align-items-center">
+            <p class="title spotify-green">Local Spotify Quiz</p>
+            {% if error %}
+                <p>{{ error }}</p>
+            {% endif %}
+            <button 
+                class="button-primary btn btn-outline-light" 
+                onclick="window.location.href='{{ spotifyLoginUrl }}'"
+            >
+                LOGIN WITH SPOTIFY
+            </button>
+        </div>
+    </div>
 {% endblock %}
     

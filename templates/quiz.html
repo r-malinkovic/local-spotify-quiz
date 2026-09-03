@@ -1,12 +1,36 @@
 {% extends "base.html" %}
 {% block head %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/playlists.css")}}">
     <title>Flask Quiz</title>
 {% endblock %}
 {% block body %}
-    <h1>playlists</h1>
-    <ul>
+    <h1 class="page-title">
+        Choose a Playlist<span class="d-inline d-md-none"><br></span> - Your Playlists
+    </h1>
+    <ul class="playlist-list">
         {% for playlist in playlist_previews %}
-            <li><a href="{{ url_for('play', playlist_id=playlist.get('id')) }}">{{ playlist.get("name") }}</a></li>
+            <li 
+                class="playlist-entry" 
+                onclick="window.location.href=`{{ url_for('play', playlist_id=playlist.get('id')) }}`"
+            >
+                {% if playlist.get('images') %}
+                    <img 
+                        src="{{ playlist.get('images')[0].get('url') }}" 
+                        alt="{{ playlist.get('name') }} image" 
+                        class="playlist-image"
+                    >
+                {% else %}
+                    <img 
+                        src="{{ url_for('static', filename='images/item-placeholder.png') }}" 
+                        alt="{{ playlist.get('name') }} image" 
+                        class="playlist-image"
+                    >
+                {% endif %}
+                <div class="playlist-text">
+                    <span class="playlist-name">{{ playlist.get("name") }}</span>
+                    <span class="playlist-songs">{{ playlist.get("songs") }} songs</span>
+                </div>
+            </li>
         {% endfor %}
     </ul>
 {% endblock %}

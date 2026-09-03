@@ -32,3 +32,19 @@ export function InitializeSpotifySDK() {
 
     player.connect()
 }
+
+export async function playSong(songUri, seekPosition = 0) {
+    return fetch(
+    `https://api.spotify.com/v1/me/player/play?device_id=${window.device_id}`,
+        {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${window.token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "uris": [songUri],
+                "position_ms": seekPosition
+            })
+        })
+}

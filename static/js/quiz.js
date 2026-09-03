@@ -1,4 +1,5 @@
-import {InitializeSpotifySDK, player} from "./spotify_sdk.js";
+import {InitializeSpotifySDK, player, playSong} from "./spotify.js";
+import {shuffleArray, sleep, buttonClick, initializeKeyboardNavigation} from "./utils.js";
 
 // let user choose these in later update
 const roundDuration = 20; 
@@ -10,20 +11,8 @@ const userAnswerElement = document.getElementById("user-answer");
 const submitAnswerButtonElement = document.getElementById("submit-answer");
 const answerHelperElement = document.getElementById("answer-helper");
 const resultsOverlayElement = document.getElementById("results-overlay");
+const resultsElement = document.getElementById("round-results");
 const nextRoundButtonElement = document.getElementById("next-round");
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
-
-async function buttonClick(buttonElement) {
-    return new Promise((resolve) => {
-        buttonElement.addEventListener("click", resolve, { once: true });
-    });
-}
 
 function startVisualCountdown(duration) {
     return setInterval(() => {
@@ -34,22 +23,6 @@ function startVisualCountdown(duration) {
             timerElement.textContent = 0; 
             }
         }, 1000);
-}
-
-async function playSong(songUri, seekPosition = 0) {
-    return fetch(
-    `https://api.spotify.com/v1/me/player/play?device_id=${window.device_id}`,
-        {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${window.token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "uris": [songUri],
-                "position_ms": seekPosition
-            })
-        })
 }
 
 async function playRound(songItem) {
@@ -78,10 +51,7 @@ async function playRound(songItem) {
     });
 }
 
-
 function showRoundResults(isAnswerCorrect, songItem) {
-    const resultsElement = document.getElementById("round-results");
-
     const correctAnswerElement = document.createElement("div");
     if (isAnswerCorrect) {
         correctAnswerElement.textContent = "Correct!";
@@ -103,14 +73,17 @@ function showRoundResults(isAnswerCorrect, songItem) {
     songInfoElement.appendChild(albumImageElement);
 
     resultsOverlayElement.style.display = "block";
+    nextRoundButtonElement.focus();
 }
 
 function resetRound() {
     resultsOverlayElement.style.display = "none";
+    resultsElement.innerHTML = "";
     userAnswerElement.value = "";
     answerHelperElement.innerHTML = "";
     timerElement.textContent = roundDuration;
     playButtonElement.disabled = false;
+    playButtonElement.focus();
 }
 
 function showFinalResults(correctAnswersCount) {
@@ -130,24 +103,45 @@ function updateAnswerHelper() {
             || song.item.album.name.trim().toLowerCase().includes(userAnswer);
     });
     answerHelperElement.innerHTML = "";
+
+    let resultElements = [];
     results.forEach((song) => {
-        const resultItem = document.createElement("div");
+        const resultItem = document.createElement("button");
+        resultItem.type = "button";
+        resultItem.className = "answer-helper-item";
         resultItem.textContent = 
             `${song.item.name} - ${song.item.artists.map(artist => artist.name).join(", ")}`;
-        resultItem.addEventListener("click", () => {
+        resultItem.onclick = () => {
             userAnswerElement.value = song.item.name;
+            userAnswerElement.focus();
             updateAnswerHelper();
-        });
-        answerHelperElement.appendChild(resultItem);
+        };
+        resultElements.push(resultItem);
     });
-    
+    answerHelperElement.append(...resultElements);
+    document.navigationIndex = -1;
+    document.navigationItems = resultElements;
 }
 
 async function main() {
     window.onSpotifyWebPlaybackSDKReady = () => {
         InitializeSpotifySDK();
     }
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== "ArrowUp" && event.key !== "ArrowDown") {
+            userAnswerElement.focus();
+        }
+    });
     userAnswerElement.addEventListener("input", updateAnswerHelper);
+    userAnswerElement.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            submitAnswerButtonElement.click();
+        }
+    });
+
+    document.navigationIndex = -1;
+    document.navigationItems = [];
+    initializeKeyboardNavigation();
 
     let isAnswerCorrect;
     let correctAnswersCount = 0;
@@ -168,6 +162,7 @@ async function main() {
             nextRoundButtonElement.textContent = "Show results";
         }
         showRoundResults(isAnswerCorrect, song.item); 
+        await sleep(100); // Prevents Enter submissions going straight to next round
         await buttonClick(nextRoundButtonElement);
         resetRound();
         roundNumber++;

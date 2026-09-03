@@ -1,0 +1,40 @@
+.playlist-list {
+    margin: 64px auto;
+    padding: 0;
+    list-style: none;
+}
+
+.playlist-entry {
+    display: flex;
+    align-items: center;
+    background-color: #121212;
+    border-bottom: 1px solid #808080;
+    padding: 16px 20px;
+}
+
+.playlist-entry:hover {
+    background-color: #282828;
+}
+
+.playlist-image {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    margin-right: 16px;
+    flex: 0 0 64px;
+}
+
+.playlist-text {
+    display: flex;
+    flex-direction: column;
+    margin-left: 16px;
+}
+
+.playlist-name {
+    color: #ffffff;
+}
+
+.playlist-songs {
+    font-size: 14px;
+    color: #b3b3b3;
+}
