@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 
 import random
+from dotenv import load_dotenv
 from string import ascii_lowercase, ascii_uppercase, digits
 from hashlib import sha256
 from base64 import urlsafe_b64encode
 from urllib.parse import urlencode
 from flask import Flask, render_template, request, redirect, url_for, session
 import requests
+import os
 
-app = Flask(__name__, template_folder="templates", static_folder="static")
+load_dotenv()
+
+app = Flask("Local Spotify Quiz", template_folder="templates", static_folder="static")
 app.secret_key = "awesome spotify quiz secret key"
-CLIENT_ID = "b4b673913cf741fa989548822f7486ff"
-REDIRECT_URI = "http://127.0.0.1:5000/quiz"
+CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+REDIRECT_URI = os.getenv("REDIRECT_URI")
 SCOPE = " ".join([
     "user-read-private",
     "user-read-email",
@@ -149,4 +153,4 @@ def index():
     return redirect(url_for("login"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
