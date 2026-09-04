@@ -2,7 +2,7 @@ import {InitializeSpotifySDK, player, playSong} from "./spotify.js";
 import {shuffleArray, sleep, buttonClick, initializeKeyboardNavigation} from "./utils.js";
 
 // let user choose these in later update
-const roundDuration = 20; 
+const roundDuration = 20.0; // seconds
 const songsAmount = 10;
 
 const timerElement = document.getElementById("timer");
@@ -10,30 +10,35 @@ const playButtonElement = document.getElementById("play-button");
 const userAnswerElement = document.getElementById("user-answer");
 const submitAnswerButtonElement = document.getElementById("submit-answer");
 const answerHelperElement = document.getElementById("answer-helper");
-const resultsOverlayElement = document.getElementById("results-overlay");
-const resultsElement = document.getElementById("round-results");
-const nextRoundButtonElement = document.getElementById("next-round");
+const resultsElement = document.getElementById("results");
+const nextRoundButtonElement = document.getElementById("next-round-button");
+const playDivElement = document.getElementById("play-div");
 
 function startVisualCountdown(duration) {
     return setInterval(() => {
         if (duration > 0) {
-            duration--;
-            timerElement.textContent = duration;
+            duration -= 0.1;
+            timerElement.textContent = Math.abs(duration).toFixed(1);
         } else {
-            timerElement.textContent = 0; 
+            timerElement.textContent = "0.0"; 
             }
-        }, 1000);
+        }, 100);
 }
 
 async function playRound(songItem) {
     playButtonElement.disabled = true;
+    playDivElement.style.display = "none";
+    timerElement.style.display = "block";
+
     userAnswerElement.disabled = false;
+    userAnswerElement.focus();
     const seekPos = Math.floor(Math.random() * (songItem.duration_ms - (roundDuration * 1000)));
     if (seekPos < 0) {
         seekPos = 0; // case where song is shorter than round duration
     }
 
-    await playSong(songItem.uri, seekPos)
+    await playSong(songItem.uri, seekPos);
+    await sleep(500); 
 
     const countdownId = startVisualCountdown(roundDuration);
     const timeoutId = setTimeout(() => {
@@ -70,29 +75,37 @@ function showRoundResults(isAnswerCorrect, songItem) {
     const albumImageElement = document.createElement("img");
     albumImageElement.src = songItem.album.images[0].url;
     albumImageElement.alt = `${songItem.name} album cover`;
-    songInfoElement.appendChild(albumImageElement);
+    resultsElement.appendChild(albumImageElement);
 
-    resultsOverlayElement.style.display = "block";
+    timerElement.style.display = "none";
+
+    nextRoundButtonElement.style.display = "block";
     nextRoundButtonElement.focus();
 }
 
 function resetRound() {
-    resultsOverlayElement.style.display = "none";
     resultsElement.innerHTML = "";
+    nextRoundButtonElement.style.display = "none";
+
     userAnswerElement.value = "";
     answerHelperElement.innerHTML = "";
-    timerElement.textContent = roundDuration;
+    timerElement.textContent = roundDuration.toFixed(1);
+
     playButtonElement.disabled = false;
+    playDivElement.style.display = "inline-block";
     playButtonElement.focus();
 }
 
 function showFinalResults(correctAnswersCount) {
-    const finalResultsMessageElement = document.getElementById("final-results-message");
-    const finalResultsOverlayElement = document.getElementById("final-results-overlay");
-    finalResultsMessageElement.textContent = 
+    const finalResultsButtonElement = document.getElementById("back-home-final-results-button");
+
+    resultsElement.textContent = 
         `You guessed ${correctAnswersCount}/${songsAmount} songs correctly!`;
-    finalResultsOverlayElement.style.display = "block";
-    nextRoundButtonElement.style.display = "none";
+    
+    timerElement.style.display = "none";
+    playDivElement.style.display = "none";
+    finalResultsButtonElement.style.display = "block";
+    finalResultsButtonElement.focus();
 }
 
 function updateAnswerHelper() {
@@ -142,6 +155,8 @@ async function main() {
     document.navigationIndex = -1;
     document.navigationItems = [];
     initializeKeyboardNavigation();
+
+    playButtonElement.focus();
 
     let isAnswerCorrect;
     let correctAnswersCount = 0;

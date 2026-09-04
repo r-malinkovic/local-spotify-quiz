@@ -4,9 +4,16 @@
     <title>Flask Quiz</title>
 {% endblock %}
 {% block body %}
-    <h1 class="page-title">
-        Choose a Playlist<span class="d-inline d-md-none"><br></span> - Your Playlists
-    </h1>
+    <div class="container-fluid nav-bar">
+        <div class="row d-flex align-items-center">
+            <div class="col">
+                <h1 id="page-title">
+                    Choose a Playlist<span class="d-inline d-md-none"><br></span> - Your Playlists
+                </h1>
+            </div>
+        </div>
+    </div>
+    
     <ul class="playlist-list">
         {% for playlist in playlist_previews %}
             <li 

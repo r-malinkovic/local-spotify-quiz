@@ -2,8 +2,6 @@
 
 A web based app that allows you to generate music quizes from your Spotify playlists.
 
-The app is curretly in early development with minimal UI elements.
-
 ## Requirements
 - Spotify Premium account
 - Python version 3.x
@@ -53,13 +51,14 @@ python app.py
 
 ## Technologies
 - HTML, CSS, JavaScript
+- Bootstrap
 - Python Flask
 - Spotify Web API
 - Spotify Web Playback SDK
 - OAuth 2.0 with PKCE
 
 ## Planned updates
-- Proper UI visuals
+- volume slider
 - Support for quizes from locally installed playlists
 - Android support
 - Quiz settings

@@ -1,33 +1,57 @@
 {% extends "base.html" %}
 {% block head %}
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/play.css")}}">
     <title>Local Spotify Quiz</title>
 {% endblock %}
 {% block body %}
-    <h1>Local Spotify Quiz</h1>
-    <p id="timer">20</p>
-    <button id="play-button">Play Song</button><br>
-    <div class="user-input">
-        <input type="text" id="user-answer" placeholder="Enter your answer">
-        <button id="submit-answer">Submit</button>
-    </div>
-
-    <p id="answer-helper"></p>
-
-    <div class="overlay" id="results-overlay">
-        <div class="overlay-content">
-            <div id="round-results"></div>
-            <button id="next-round">Next Round</button>
+    <div class="container-fluid nav-bar">
+        <div class="row d-flex align-items-center">
+            <div class="col">
+                <h1 id="page-title">Local Spotify Quiz</h1>
+            </div>
+            <div class="col">
+                <button id="back-home-button" onclick="window.location.href=`{{ url_for('quiz') }}`">
+                    < Back to playlists
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="overlay" id="final-results-overlay">
-        <div class="overlay-content">
-            <div id="final-results-message"></div>
-            <button id="back-home" onclick="window.location.href=`{{ url_for('quiz') }}`">
-                Back to playlists
-            </button>
+    <div class="container-fluid">
+        <div class="row">
+            <div 
+                class="side col-md-6 d-flex flex-column justify-content-center text-center"
+                id="answer-side"
+            >
+                <button class="primary-button mb-3" id="submit-answer">Submit</button>
+                <input type="text" class="answer-input" id="user-answer" placeholder="Enter your answer">
+                <p id="answer-helper"></p>
+            </div>
+            <div 
+                class="side col-md-6 d-flex flex-column align-items-center justify-content-center text-center" 
+                id="song-side"
+            >
+                <p id="timer"></p>
+                <div id="play-div">
+                    <button type="button" id="play-button" aria-label="Play song">
+                        <img src="{{ url_for('static', filename='images/play-button.png') }}" alt="Play song">
+                    </button>
+                    <i>Click to play</i>
+                </div>
+
+                <div id="results"></div>
+                <button class="primary-button" id="next-round-button">Next Round</button>
+                <button 
+                    class="primary-button" 
+                    id="back-home-final-results-button" 
+                    onclick="window.location.href=`{{ url_for('quiz') }}`"
+                >
+                    Back to playlists
+                </button>
+            </div>
         </div>
     </div>
+
 
     <script>
         window.token = "{{ session.get('access_token') }}";

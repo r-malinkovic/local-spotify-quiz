@@ -12,92 +12,43 @@ body {
     color: #1DB954;
 }
 
-.page-title {
+
+#page-title {
     font-family: "Slabo 13px", serif;
     font-size: 24px;
     font-weight: 400;
     text-align: left;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 10px 20px;
     color: #1DB954;
+    padding: 5px 20px;
+    margin: 0;
+}
+
+.nav-bar {
+    background-color: #121212;
+    text-align: right;
+    padding: 20px 20px;
+    margin-bottom: 60px;
     border-bottom: 2px solid #b3b3b3;
 }
 
-.button-primary {
-    font-family: "Slabo 13px", serif;
-    border: 2px solid #b3b3b3;
-    border-radius: 500px;
-    padding: 15px 25px;
-    background-color: #121212;
+.nav-bar button {
+    background-color: rgba(0, 0, 0, 0);
+    color: #b3b3b3;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px 20px;
+    text-align: right;
 }
 
-.button-primary:hover {
-    background-color: #b3b3b3;
-    color: #121212;
-}
-
-.answer-helper-item.selected {
+.primary-button {
+    width: 100%;
     background-color: #1DB954;
-    color: #121212;
-}
-
-.overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    background: rgb(209, 207, 207);
-    border-radius: 10px;
-    z-index: 1000;
-    display: none;
-}
-
-.overlay-content {
-    padding: 5%;
-    text-align: center;
-}
-
-.overlay-content img {
-    width: 80%;
-    height: auto;
-}
-
-
-#final-results-overlay {
-    width: 30vw;
-    height: 20vh;
-}
-
-#timer {
-    font-size: 24px;
-    font-weight: bold;
-    color: #73ee00;
-    margin-bottom: 20px;
-}
-
-#answer-helper {
-    width: 300px;
-    height: 50vh;
-    overflow-y: auto;
-}
-
-#answer-helper div {
     padding: 8px;
     cursor: pointer;
-    border: 1px solid #ccc;
-    overflow-wrap: anywhere;
+    border: 1px solid #000;
+    border-radius: 4px;
 }
 
-#answer-helper div:hover {
-    background: #9e9d9d;
-}
 
-@media (max-width: 576px) {
-    .button-primary {
-        font-size: 10px;
-        padding: 10px 12px;
-    }
-}
 
