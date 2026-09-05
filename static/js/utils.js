@@ -17,15 +17,20 @@ export async function buttonClick(buttonElement) {
 
 export function initializeKeyboardNavigation() {
     document.addEventListener("keydown", (event) => {
+        console.log("press")
         if (event.key === "ArrowDown") {
             event.preventDefault();
             document.navigationIndex = 
                 Math.min(document.navigationIndex + 1, document.navigationItems.length - 1);
             document.navigationItems[document.navigationIndex].focus();
+
         } else if (event.key === "ArrowUp") {
             event.preventDefault();
             document.navigationIndex = Math.max(document.navigationIndex - 1, 0);
             document.navigationItems[document.navigationIndex].focus();
-        } 
+            
+        } else if (event.key === "Enter") {
+            document.activeElement.click()
+        }
     });
 }

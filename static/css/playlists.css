@@ -1,5 +1,5 @@
 .playlist-list {
-    margin: 64px auto;
+    margin-bottom: 64px;
     padding: 0;
     list-style: none;
 }
@@ -16,7 +16,7 @@
     background-color: #282828;
 }
 
-.playlist-image {
+.playlist-entry img {
     width: 64px;
     height: 64px;
     object-fit: cover;
@@ -24,7 +24,7 @@
     flex: 0 0 64px;
 }
 
-.playlist-text {
+.playlist-entry span {
     display: flex;
     flex-direction: column;
     margin-left: 16px;

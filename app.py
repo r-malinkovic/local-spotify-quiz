@@ -55,7 +55,21 @@ def login():
 def quiz():
     if "code" not in request.args and not user_playlists:
         return redirect(url_for("login", error=request.args.get("message", "Unknown error")))
-    elif "code" in request.args:
+
+    if not session.get("user_id"):
+        user_response = requests.get(
+            "https://api.spotify.com/v1/me",
+            headers = {"Authorization": "Bearer " + session["access_token"]},
+            timeout = 10
+        )
+        if "error" in user_response.json():
+            return redirect(url_for("login", error=user_response.json().get("message", "Unknown error")))
+        elif user_response.json().get("product") in ("free", "open"):
+            return redirect(url_for("login", error="Spotify free accounts are not supported with Spotify's API"))
+        else:
+            session["user_id"] = user_response.json().get("id")
+    
+    if "code" in request.args and not user_playlists.get(session["user_id"]):
         token_response = requests.post(
             "https://accounts.spotify.com/api/token",
             headers = {"Content-Type": "application/x-www-form-urlencoded"},
@@ -73,20 +87,6 @@ def quiz():
         session["access_token"] = token_response.json().get("access_token")
         session["refresh_token"] = token_response.json().get("refresh_token")
 
-    if not session.get("user_id"):
-        user_response = requests.get(
-            "https://api.spotify.com/v1/me",
-            headers = {"Authorization": "Bearer " + session["access_token"]},
-            timeout = 10
-        )
-        if "error" in user_response.json():
-            return redirect(url_for("login", error=user_response.json().get("message", "Unknown error")))
-        elif user_response.json().get("product") in ("free", "open"):
-            return redirect(url_for("login", error="Spotify free accounts are not supported with Spotify's API"))
-        else:
-            session["user_id"] = user_response.json().get("id")
-
-    if not user_playlists.get(session["user_id"]):
         playlists_response = requests.get(
             "https://api.spotify.com/v1/me/playlists",
             headers = {"Authorization": "Bearer " + session["access_token"]},
@@ -125,6 +125,7 @@ def quiz():
 def play(playlist_id):
     offset = 0
     songs = []
+    k = 0
     while True:
         songs_json = requests.get(
             f"https://api.spotify.com/v1/playlists/{playlist_id}/items?offset={offset}&limit=100",
@@ -135,18 +136,27 @@ def play(playlist_id):
         if "error" in songs_json:
             return redirect(url_for("login", error=songs_json.get("message", "Unknown error")))
 
-        songs.extend(
-            song
-            for song in songs_json.get("items", [])
-            if song.get("item") is not None
-            and not song.get("is_local")
-        )
-        
+        for song in songs_json.get("items", []):
+            try:
+                if song.get("item", {}).get("uri") is None:
+                    continue
+                if not song.get("item", {}).get("is_playable", False) or song.get("is_local"):
+                    continue
+                songs.append(song)
+            except AttributeError:
+                pass
+
         if not songs_json.get("next"):
             break
         offset += songs_json.get("limit", 0)
+        k += 1
 
-    return render_template("play.html", playlist_id=playlist_id, songs=songs)
+    return render_template(
+        "play.html", 
+        playlist_id=playlist_id,
+        songs=songs,
+        songs_total=songs_json.get("total", 0)
+    )
 
 
 @app.route("/", methods=["GET"])
@@ -155,4 +165,3 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=False)
-    

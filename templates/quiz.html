@@ -14,11 +14,15 @@
         </div>
     </div>
     
+    <div class="container-fluid info-panel">
+        <span id="info-text"></span>
+    </div>
+
     <ul class="playlist-list">
         {% for playlist in playlist_previews %}
-            <li 
-                class="playlist-entry" 
-                onclick="window.location.href=`{{ url_for('play', playlist_id=playlist.get('id')) }}`"
+            <li class="playlist-entry"
+                onclick="playPlaylist(`{{ url_for('play', playlist_id=playlist.get('id')) }}`)"
+                tabindex="0"
             >
                 {% if playlist.get('images') %}
                     <img 
@@ -40,5 +44,6 @@
             </li>
         {% endfor %}
     </ul>
+    <script type="module" src="{{ url_for('static', filename='js/playlists.js')}}"></script>
 {% endblock %}
     

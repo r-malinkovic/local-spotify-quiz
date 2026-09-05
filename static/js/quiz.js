@@ -1,10 +1,13 @@
-import {InitializeSpotifySDK, player, playSong} from "./spotify.js";
+import {InitializeSpotifySDK, player, playerReady, playSong} from "./spotify.js";
 import {shuffleArray, sleep, buttonClick, initializeKeyboardNavigation} from "./utils.js";
 
 // let user choose these in later update
 const roundDuration = 20.0; // seconds
 const songsAmount = 10;
 
+const infoTextElement = document.getElementById("info-text");
+const roundCounterElement = document.getElementById("round-counter");
+const volumeElement = document.getElementById("volume");
 const timerElement = document.getElementById("timer");
 const playButtonElement = document.getElementById("play-button");
 const userAnswerElement = document.getElementById("user-answer");
@@ -37,8 +40,8 @@ async function playRound(songItem) {
         seekPos = 0; // case where song is shorter than round duration
     }
 
-    await playSong(songItem.uri, seekPos);
-    await sleep(500); 
+    playSong(songItem.uri, seekPos);
+    await sleep(300); 
 
     const countdownId = startVisualCountdown(roundDuration);
     const timeoutId = setTimeout(() => {
@@ -83,7 +86,7 @@ function showRoundResults(isAnswerCorrect, songItem) {
     nextRoundButtonElement.focus();
 }
 
-function resetRound() {
+function resetRound(roundNumber) {
     resultsElement.innerHTML = "";
     nextRoundButtonElement.style.display = "none";
 
@@ -94,6 +97,10 @@ function resetRound() {
     playButtonElement.disabled = false;
     playDivElement.style.display = "inline-block";
     playButtonElement.focus();
+
+    if (roundNumber <= songsAmount) {
+        roundCounterElement.textContent = `Round ${roundNumber}/${songsAmount}`
+    }
 }
 
 function showFinalResults(correctAnswersCount) {
@@ -105,7 +112,6 @@ function showFinalResults(correctAnswersCount) {
     timerElement.style.display = "none";
     playDivElement.style.display = "none";
     finalResultsButtonElement.style.display = "block";
-    finalResultsButtonElement.focus();
 }
 
 function updateAnswerHelper() {
@@ -139,7 +145,8 @@ function updateAnswerHelper() {
 async function main() {
     window.onSpotifyWebPlaybackSDKReady = () => {
         InitializeSpotifySDK();
-    }
+    } 
+    
     document.addEventListener("keydown", (event) => {
         if (event.key !== "Enter" && event.key !== "ArrowUp" && event.key !== "ArrowDown") {
             userAnswerElement.focus();
@@ -152,12 +159,16 @@ async function main() {
         }
     });
 
+    volumeElement.addEventListener("input", () => {
+        player.setVolume(volumeElement.value / 100);
+        volumeElement.style.setProperty("--volume-progress", `${volumeElement.value}%`);
+    });
+
     document.navigationIndex = -1;
     document.navigationItems = [];
     initializeKeyboardNavigation();
 
-    playButtonElement.focus();
-
+    let error;
     let isAnswerCorrect;
     let correctAnswersCount = 0;
     let roundNumber = 1;
@@ -165,8 +176,14 @@ async function main() {
     shuffleArray(songsCopy);
     const playSongs = songsCopy.slice(0, songsAmount);
 
+    await playerReady;
+
+    playButtonElement.focus();
+
     for (const song of playSongs) {
+        await sleep(100); // Prevents Enter submissions going straight to next round
         await buttonClick(playButtonElement);
+        infoTextElement.textContent = "";
         await playRound(song.item);
         isAnswerCorrect = 
             userAnswerElement.value.trim().toLowerCase() === song.item.name.trim().toLowerCase();
@@ -177,10 +194,10 @@ async function main() {
             nextRoundButtonElement.textContent = "Show results";
         }
         showRoundResults(isAnswerCorrect, song.item); 
-        await sleep(100); // Prevents Enter submissions going straight to next round
+        await sleep(100); // Prevents Enter submissions going past results screen
         await buttonClick(nextRoundButtonElement);
-        resetRound();
         roundNumber++;
+        resetRound(roundNumber);
     };
     showFinalResults(correctAnswersCount);
 }

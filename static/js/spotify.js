@@ -1,4 +1,11 @@
 export let player;
+let playerReadyResolve;
+let playerReadyReject;
+
+export const playerReady = new Promise((resolve, reject) => {
+    playerReadyResolve = resolve;
+    playerReadyReject = reject;
+});
 
 export function InitializeSpotifySDK() {
     player = new Spotify.Player({
@@ -10,6 +17,7 @@ export function InitializeSpotifySDK() {
     // Ready
     player.addListener('ready', ({ device_id }) => {
         window.device_id = device_id;
+        playerReadyResolve(player);
         console.log('Ready with Device ID', device_id);
     });
 
@@ -20,20 +28,23 @@ export function InitializeSpotifySDK() {
 
     player.addListener('initialization_error', ({ message }) => {
         console.error(message);
+        playerReadyReject(new Error(message));
     });
 
     player.addListener('authentication_error', ({ message }) => {
         console.error(message);
+        playerReadyReject(new Error(message));
     });
 
     player.addListener('account_error', ({ message }) => {
         console.error(message);
+        playerReadyReject(new Error(message));
     });
 
     player.connect()
 }
 
-export async function playSong(songUri, seekPosition = 0) {
+export function playSong(songUri, seekPosition) {
     return fetch(
     `https://api.spotify.com/v1/me/player/play?device_id=${window.device_id}`,
         {
@@ -46,5 +57,6 @@ export async function playSong(songUri, seekPosition = 0) {
                 "uris": [songUri],
                 "position_ms": seekPosition
             })
-        })
+        }
+    )
 }
