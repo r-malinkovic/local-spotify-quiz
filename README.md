@@ -58,7 +58,6 @@ python app.py
 - OAuth 2.0 with PKCE
 
 ## Planned updates
-- volume slider
 - Support for quizes from locally installed playlists
 - Android support
 - Quiz settings
