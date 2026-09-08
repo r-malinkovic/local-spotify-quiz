@@ -66,7 +66,7 @@ def quiz():
         )
 
         if "error" in token_response:
-            return redirect(url_for("login", error=token_response).get("message", "Unknown error"))
+            return redirect(url_for("login", error=token_response.get("message", "Unknown error")))
         
         session["access_token"] = token_response.get("access_token")
         session["refresh_token"] = token_response.get("refresh_token")
@@ -111,13 +111,12 @@ def quiz():
     )
 
 
-@app.route("/quiz/play/<playlist_id>", methods=["GET"])
+@app.route("/play/<playlist_id>", methods=["GET"])
 def play(playlist_id):
-
     songs_response = spotify_requests.songs(session["access_token"], playlist_id)
 
     if "error" in songs_response:
-        return redirect(url_for("quiz", error=songs_response.get("message", "Unknown error")))
+        return redirect(url_for("quiz", error=songs_response.get("message", songs_response)))
 
     songs = []
     for song in songs_response.get("items", []):
