@@ -1,9 +1,9 @@
 import {InitializeSpotifySDK, player, playerReady, playSong} from "./spotify.js";
 import {shuffleArray, sleep, buttonClick, initializeKeyboardNavigation} from "./utils.js";
+import {settings, storeSettings} from "./settings.js"
 
-// let user choose these in later update
-const roundDuration = 20.0; // seconds
-const songsAmount = 10;
+const roundDuration = Number(settings.roundDuration);
+const songsAmount = Number(settings.songsAmount);
 
 const infoTextElement = document.getElementById("info-text");
 const roundCounterElement = document.getElementById("round-counter");
@@ -159,14 +159,20 @@ async function main() {
         }
     });
 
+    volumeElement.style.setProperty("--volume-progress", `${settings.volume}%`);
+    volumeElement.value = settings.volume;
     volumeElement.addEventListener("input", () => {
         player.setVolume(volumeElement.value / 100);
         volumeElement.style.setProperty("--volume-progress", `${volumeElement.value}%`);
+        settings.volume = volumeElement.value;
+        storeSettings();
     });
 
     document.navigationIndex = -1;
     document.navigationItems = [];
     initializeKeyboardNavigation();
+
+    roundCounterElement.textContent = `Round 1/${songsAmount}`;
 
     let error;
     let isAnswerCorrect;
@@ -177,6 +183,8 @@ async function main() {
     const playSongs = songsCopy.slice(0, songsAmount);
 
     await playerReady;
+
+    player.setVolume(settings.volume / 100);
 
     playButtonElement.focus();
 

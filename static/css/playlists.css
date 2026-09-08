@@ -38,3 +38,11 @@
     font-size: 14px;
     color: #b3b3b3;
 }
+
+#game-settings {
+    width: 300px;
+}
+
+#game-settings label {
+    line-height: 3.5em;
+}

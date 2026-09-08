@@ -10,7 +10,7 @@
 #volume {
     height: 4px;
     width: 100px;
-    --volume-progress: 60%;
+    --volume-progress: 0%;
     appearance: none;
     background: linear-gradient(
         to right,
@@ -35,6 +35,36 @@
     appearance: none;
 }
 
+@media (max-width: 576px) {
+    #info-text {
+        display: none;
+    }
+
+    .side {
+        min-height: 30vh;
+    }
+
+    #song-side {
+        height: 40vh;
+        margin-bottom: 5px;
+        font-size: 0.8rem;
+    }
+
+    #results img {
+        width: 30%;
+        height: auto;
+    }
+
+    #results p {
+        margin-bottom: 10px;
+    }
+
+    #results button {
+        padding: 6px;
+        margin-top: 10px;
+    }
+
+}
 /* Answer-side */
 
 #answer-side {

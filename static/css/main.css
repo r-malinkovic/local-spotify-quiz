@@ -8,11 +8,6 @@ body {
     color: #ffffff;
 }
 
-.spotify-green {
-    color: #1DB954;
-}
-
-
 #page-title {
     font-family: "Slabo 13px", serif;
     font-size: 24px;
@@ -61,5 +56,61 @@ body {
     border-radius: 4px;
 }
 
+.secondary-button {
+    width: 100%;
+    padding: 8px;
+    color: #b3b3b3;
+    background-color: transparent;
+    border: 1px solid #535353;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
+.secondary-button:hover,
+.secondary-button:focus {
+    color: #ffffff;
+    background-color: #282828;
+    border-color: #b3b3b3;
+}
+
+.number-input {
+    width: 3.0em;
+    height: 2.5em;
+    padding: 4px 6px;
+    color: #ffffff;
+    background-color: #212121;
+    border: 1px solid #535353;
+    border-radius: 4px;
+    text-align: center;
+    appearance: textfield;
+}
+
+.number-input::-webkit-inner-spin-button,
+.number-input::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
+}
+
+.overlay {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    background-color: #121212;
+    border: 1px solid #535353;
+    border-radius: 5px;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.overlay-content {
+    padding: 20px;
+}
 

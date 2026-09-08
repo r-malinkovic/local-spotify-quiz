@@ -21,7 +21,10 @@
     <ul class="playlist-list">
         {% for playlist in playlist_previews %}
             <li class="playlist-entry"
-                onclick="playPlaylist(`{{ url_for('play', playlist_id=playlist.get('id')) }}`)"
+                onclick="openGameSettingsOverlay(
+                    `{{ playlist.get('name') }}`,
+                    `{{ url_for('play', playlist_id=playlist.get('id')) }}`
+                )"
                 tabindex="0"
             >
                 {% if playlist.get('images') %}
@@ -44,6 +47,45 @@
             </li>
         {% endfor %}
     </ul>
+
+    <div class="overlay" id="game-settings">
+        <div class="overlay-content">
+            <div class="text-center mb-4">
+                <h2>Quiz settings</h2>
+                <i id="playlist-name"></i>
+            </div>
+            <div class="container-fluid mb-5">
+                <div class="row d-flex align-items-center">
+                    <div class="col-md-9">
+                        <label for="songs-amount">Number of songs</label>
+                    </div>
+                    <div class="col-md-3 px-0">
+                        <input type="number" min="1" max="100" id="songs-amount" class="number-input"><br>
+                    </div>
+                </div>
+                <div class="row d-flex align-items-center">
+                    <div class="col-md-9 text-start">
+                        <label for="round-duration">Round duration</label>
+                    </div>
+                    <div class="col-md-3 px-0">
+                        <input type="number" min="1" max="100" id="round-duration" class="number-input">
+                        <span>s</span><br>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row d-flex align-items-center">
+                    <div class="col text-start">
+                        <button type="button" class="secondary-button" id="overlay-cancel">Cancel</button>
+                    </div>
+                    <div class="col text-end">
+                        <button type="button" class="primary-button" id="overlay-play">Play</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="{{ url_for('static', filename='js/playlists.js')}}"></script>
 {% endblock %}
     
