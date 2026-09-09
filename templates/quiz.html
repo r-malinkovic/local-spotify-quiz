@@ -16,6 +16,9 @@
     
     <div class="container-fluid info-panel">
         <span id="info-text"></span>
+        {% if request.args.get("error") %}
+            <p class="error-message">{{ request.args.get("error") }}</p>
+        {% endif %}
     </div>
 
     <ul class="playlist-list">

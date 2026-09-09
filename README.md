@@ -59,8 +59,6 @@ python app.py
 
 ## Planned updates
 - Support for quizes from locally installed playlists
-- Android support
-- Quiz settings
 - Remember me login checkbox
 
 ## License

@@ -8,8 +8,8 @@
     <div class="login-content">
         <div class="container min-vh-100 d-flex flex-column justify-content-center align-items-center">
             <p class="title spotify-green">Local Spotify Quiz</p>
-            {% if error %}
-                <p>{{ error }}</p>
+            {% if request.args.get("error") %}
+                <p class="error-message">{{ request.args.get("error") }}</p>
             {% endif %}
             <button 
                 class="button-login btn btn-outline-light" 

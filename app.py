@@ -55,7 +55,7 @@ def login():
 @app.route("/quiz", methods=["GET"])
 def quiz():
     if "code" not in request.args and not user_playlists:
-        return redirect(url_for("login", error=request.args.get("message", "Unknown error")))
+        return redirect(url_for("login", error=request.args.get("error", {}).get("message", "Unknow error")))
     
     if "code" in request.args and not user_playlists.get(session.get("user_id")):
         token_response = spotify_requests.token(
@@ -66,7 +66,8 @@ def quiz():
         )
 
         if "error" in token_response:
-            return redirect(url_for("login", error=token_response.get("message", "Unknown error")))
+            print(token_response)
+            return redirect(url_for("login", error=token_response.get("error", {}).get("message", "Unknow error")))
         
         session["access_token"] = token_response.get("access_token")
         session["refresh_token"] = token_response.get("refresh_token")
@@ -75,16 +76,25 @@ def quiz():
             user_response = spotify_requests.user(session["access_token"])
 
             if "error" in user_response:
-                return redirect(url_for("login", error=user_response.get("message", "Unknown error")))
+                return redirect(url_for(
+                    "login", 
+                    error= "error: " + user_response.get("error", {}).get("message", "Unknow error")
+                ))
             elif user_response.get("product") in ("free", "open"):
-                return redirect(url_for("login", error="Spotify free accounts are not supported with Spotify's API"))
+                return redirect(url_for(
+                    "login",
+                    error="Spotify free accounts are not supported with Spotify's API"
+                ))
             else:
                 session["user_id"] = user_response.get("id")
         
         playlists_response = spotify_requests.user_playlists(session["access_token"])
 
         if "error" in playlists_response:
-            return redirect(url_for("login", error=playlists_response.get("message", "Unknown error")))
+            return redirect(url_for(
+                "login",
+                error= "error: " + playlists_response.get("error", {}).get("message", "Unknow error")
+            ))
         
         availible_playlists = playlists_response.copy()
         availible_playlists["items"] = [
@@ -104,6 +114,17 @@ def quiz():
             }
             for playlist in user_playlists[session["user_id"]]["all_playlists"]["items"]
         ], key=lambda x: x.get("songs", 0), reverse=True)
+        
+    else:
+        refresh_response = spotify_requests.refresh_token(CLIENT_ID, session["refresh_token"])
+
+        if "error" in refresh_response or "access_token" not in refresh_response:
+            return redirect(url_for(
+                "login",
+                error= "error: " + refresh_response.get("error", {}).get("message", "Unknow error")
+            ))
+        
+        session["access_token"] = refresh_response.get("access_token")
 
     return render_template(
         "quiz.html", 
@@ -116,7 +137,10 @@ def play(playlist_id):
     songs_response = spotify_requests.songs(session["access_token"], playlist_id)
 
     if "error" in songs_response:
-        return redirect(url_for("quiz", error=songs_response.get("message", songs_response)))
+        return redirect(url_for(
+            "quiz",
+            error= "error: " + songs_response.get("error", {}).get("message", "Unknow error")
+        ))
 
     songs = []
     for song in songs_response.get("items", []):
@@ -142,4 +166,4 @@ def index():
     return redirect(url_for("login"))
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)

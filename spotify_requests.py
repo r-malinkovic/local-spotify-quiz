@@ -14,6 +14,18 @@ def token(client_id, code, redirect_uri, code_verifier):
         timeout = 10
     ).json()
 
+def refresh_token(client_id, refresh_token):
+    return post(
+        "https://accounts.spotify.com/api/token",
+        headers = {"Content-Type": "application/x-www-form-urlencoded"},
+        data = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+            "client_id": client_id
+        },
+        timeout = 10
+    ).json()
+
 def user(access_token):
     return get(
         "https://api.spotify.com/v1/me",
